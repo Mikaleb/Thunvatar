@@ -6,4 +6,4 @@ DEPS:= chrome/ \
        install.rdf
 
 gravatars.xpi: ${DEPS}
-  zip  $@  ${DEPS}
+	zip $@ ${DEPS}

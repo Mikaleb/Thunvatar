@@ -9,12 +9,10 @@ var columnHandler = {
   },
 
   getImageSrc: function(row, col) {
-    return photo(this.getAuthorEmail(row));
+    return this.photo(this.getAuthorEmail(row));
   },
 
-  getSortStringForRow: function(hdr) {
-    return null;
-  },
+  getSortStringForRow: function(hdr) { return null; },
 
   isString: function() { return false; },
 
@@ -23,6 +21,7 @@ var columnHandler = {
   getRowProperties: function(row, props) { },
 
   getSortLongForRow: function(hdr) { return 0; },
+
 
   // --- helper methods ---
 
@@ -37,44 +36,46 @@ var columnHandler = {
     let emails = {};
     let fullNames = {};
     let names = {};
-    let numberOfParsedAddresses =
-    gHeaderParser.parseHeadersWithArray(header, emails, names, fullNames);
+    let numberOfParsedAddresses = gHeaderParser.parseHeadersWithArray(header, emails, names, fullNames);
     return emails.value;
+  },
+
+  addressBookPicture: function(email) {
+    return null; // NOT IMPLEMENTED YET
+
+    // .. FIXME figure out how to grab all address books
+    let card = collection.cardForEmailAddress(email);
+    if (card == null) {
+      return null;
+    }
+    // FIXME return a photo if there is one
+  },
+
+  photo: function(email) {
+    return this.addressBookPicture(email) || this.gravatar(email);
+  },
+
+  gravatar: function(email) {
+    let hash = GlodaUtils.md5HashString(email.toLowerCase().trim());
+    photoURI = "http://www.gravatar.com/avatar/" + encodeURIComponent(hash) + '?s=16&d=identicon';
+    return photoURI;
   }
 }
 
-function addressBookPicture(email) {
-  // .. FIXME figure out how to grab all address books
-  let card = collection.cardForEmailAddress(email);
-  if (card == null) {
-    return null;
-  }
-  // FIXME return a photo if there is one
-}
-
-function photo(email) {
-  return /* addressBookPicture(email) || */ gravatar(email);
-}
-
-function gravatar(email) {
-  let hash = GlodaUtils.md5HashString(email.toLowerCase().trim());
-  photoURI = "http://www.gravatar.com/avatar/" + encodeURIComponent(hash) + '?s=16&d=identicon';
-  return photoURI;
-}
 
 
 
 window.addEventListener("load", loadGravatars, false);
 
 function loadGravatars() {
+  window.removeEventListener("load", loadGravatars, false); // remove listener, no longer needed
+
   var ObserverService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
   ObserverService.addObserver(CreateDbObserver, "MsgCreateDBView", false);
 }
 
 var CreateDbObserver = {
-  // Components.interfaces.nsIObserver
-  observe: function(aMsgFolder, aTopic, aData)
-  {
+  observe: function(aMsgFolder, aTopic, aData) {
      addCustomColumnHandler();
   }
 }

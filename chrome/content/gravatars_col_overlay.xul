@@ -5,7 +5,7 @@
     <treecols id="threadCols">
     <splitter class="tree-splitter" />
     <treecol id="colGravatar" persist="hidden ordinal width"
-           currentView="unthreaded" flex="2"
+           currentView="unthreaded" flex="1"
            label="Gravatar" tooltiptext="You cannot sort by Gravatar" />
     </treecols>
   </tree>

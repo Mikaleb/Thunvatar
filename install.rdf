@@ -6,7 +6,7 @@
 
   <Description about="urn:mozilla:install-manifest">
     <em:id>gravatars@tijnschuurmans.nl</em:id>
-    <em:version>0.4</em:version>
+    <em:version>1.0</em:version>
     <em:creator>Tijn Schuurmans</em:creator>
     <em:name>Gravatars</em:name>
     <em:description>Show gravatars in a column</em:description>

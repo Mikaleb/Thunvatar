@@ -2,17 +2,22 @@ if (!defaultPhotoURI) {
   var defaultPhotoURI = "chrome://messenger/skin/addressbook/icons/contact-generic.png";
 }
 
+const MAILBOX = 0
+const NAME = 1
+const FULL_NAME = 2
+
 var columnHandler = {
   getCellText: function(row, col) {
-    // return this.getAuthorEmail(row);
-    return null;
+    // TODO show the name from the address book if possible
+    // TODO it is doing the work twice, rewrite to parseEmailHeader just once
+    return this.getAuthorName(row) || this.getAuthorMailbox(row);
   },
 
   getImageSrc: function(row, col) {
-    return this.photo(this.getAuthorEmail(row));
+    return this.photo(this.getAuthorMailbox(row));
   },
 
-  getSortStringForRow: function(hdr) { return hdr.mime2DecodedAuthor; },
+  getSortStringForRow: function(hdr) { return this.parseEmailsFromHeader(hdr.mime2DecodedAuthor, 'mailbox')[0]; },
 
   isString: function() { return true; },
 
@@ -27,17 +32,27 @@ var columnHandler = {
 
   getAuthor: function(row) { return gDBView.getMsgHdrAt(row).mime2DecodedAuthor; },
 
-  getAuthorEmail: function(row) { return this.emailsFromHeader(this.getAuthor(row))[0] },
+  getAuthorName: function(row) { return this.parseEmailsFromHeader(this.getAuthor(row), NAME)[0] },
+
+  getAuthorMailbox: function(row) { return this.parseEmailsFromHeader(this.getAuthor(row), MAILBOX)[0] },
 
   // header should be the value of to, from, or cc
-  emailsFromHeader: function(header) {
+  parseEmailsFromHeader: function(header, query) {
     const gHeaderParser = Cc["@mozilla.org/messenger/headerparser;1"].getService(Ci.nsIMsgHeaderParser);
 
-    let emails = {};
-    let fullNames = {};
+    let mailboxes = {};
     let names = {};
-    let numberOfParsedAddresses = gHeaderParser.parseHeadersWithArray(header, emails, names, fullNames);
-    return emails.value;
+    let fullNames = {};
+
+    let numberOfParsedAddresses = gHeaderParser.parseHeadersWithArray(header, mailboxes, names, fullNames);
+
+    if (query === NAME) {
+      return names.value;
+    } else if (query === FULL_NAME) {
+      return fullNames.value;
+    } else if (query == MAILBOX) {
+      return mailboxes.value;
+    }
   },
 
   addressBookPicture: function(email) {

@@ -12,9 +12,9 @@ var columnHandler = {
     return this.photo(this.getAuthorEmail(row));
   },
 
-  getSortStringForRow: function(hdr) { return null; },
+  getSortStringForRow: function(hdr) { return hdr.mime2DecodedAuthor; },
 
-  isString: function() { return false; },
+  isString: function() { return true; },
 
   getCellProperties: function(row, col, props) { },
 

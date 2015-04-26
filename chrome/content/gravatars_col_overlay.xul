@@ -6,7 +6,7 @@
     <splitter class="tree-splitter" />
     <treecol id="colGravatar" persist="hidden ordinal width"
            currentView="unthreaded" flex="1"
-           label="Gravatar" tooltiptext="You cannot sort by Gravatar" />
+           label="Gravatar" tooltiptext="Sort by author" />
     </treecols>
   </tree>
 

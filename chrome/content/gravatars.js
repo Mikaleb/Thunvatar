@@ -87,7 +87,7 @@ gravatars.gravatar = function(email) {
 
 
 gravatars.init = function() {
-  var ObserverService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
+  var ObserverService = Cc["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
   ObserverService.addObserver(gravatars.CreateDbObserver, "MsgCreateDBView", false);
 }
 

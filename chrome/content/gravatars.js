@@ -3,26 +3,20 @@ if (typeof gravatars == "undefined") {
   var gravatars = {};
 };
 
-if (!defaultPhotoURI) {
-  var defaultPhotoURI = "chrome://messenger/skin/addressbook/icons/contact-generic.png";
-}
-
-const MAILBOX = 0
-const NAME = 1
-const FULL_NAME = 2
 
 gravatars.columnHandler = {
   getCellText: function(row, col) {
     // TODO show the name from the address book if possible
-    // TODO it is doing the work twice, rewrite to parseEmailHeader just once
-    return gravatars.getAuthorName(row) || gravatars.getAuthorMailbox(row);
+    let author = gravatars.getAuthorAtRow(row);
+    return author.name || author.mailbox;
   },
 
   getImageSrc: function(row, col) {
-    return gravatars.photo(gravatars.getAuthorMailbox(row));
+    let author = gravatars.getAuthorAtRow(row);
+    return gravatars.photo(author.mailbox);
   },
 
-  getSortStringForRow: function(hdr) { return gravatars.parseEmailsFromHeader(hdr.mime2DecodedAuthor, 'mailbox')[0]; },
+  getSortStringForRow: function(hdr) { return gravatars.getAuthorFromHdr(hdr).mailbox; },
 
   isString: function() { return true; },
 
@@ -33,20 +27,17 @@ gravatars.columnHandler = {
   getSortLongForRow: function(hdr) { return 0; },
 }
 
-gravatars.getAuthor = function(row) {
-  return gDBView.getMsgHdrAt(row).mime2DecodedAuthor;
+
+gravatars.getAuthorFromHdr = function(hdr) {
+  let author = hdr.mime2DecodedAuthor
+  return gravatars.firstEmailFromHeader(author);
 }
 
-gravatars.getAuthorName = function(row) {
-  return gravatars.parseEmailsFromHeader(gravatars.getAuthor(row), NAME)[0]
+gravatars.getAuthorAtRow = function(row) {
+  return gravatars.getAuthorFromHdr(gDBView.getMsgHdrAt(row));
 }
 
-gravatars.getAuthorMailbox = function(row) {
-  return gravatars.parseEmailsFromHeader(gravatars.getAuthor(row), MAILBOX)[0]
-}
-
-  // header should be the value of to, from, or cc
-gravatars.parseEmailsFromHeader = function(header, query) {
+gravatars.firstEmailFromHeader = function(header, query) {
   const gHeaderParser = Cc["@mozilla.org/messenger/headerparser;1"].getService(Ci.nsIMsgHeaderParser);
 
   let mailboxes = {};
@@ -55,18 +46,13 @@ gravatars.parseEmailsFromHeader = function(header, query) {
 
   let numberOfParsedAddresses = gHeaderParser.parseHeadersWithArray(header, mailboxes, names, fullNames);
 
-  if (query === NAME) {
-    return names.value;
-  } else if (query === FULL_NAME) {
-    return fullNames.value;
-  } else if (query == MAILBOX) {
-    return mailboxes.value;
-  }
+  return { name: names.value[0], fullName: fullNames.value[0], mailbox: mailboxes.value[0] };
 }
 
 gravatars.addressBookPicture = function(email) {
   return null; // NOT IMPLEMENTED YET
 
+  // let defaultPhotoURI = "chrome://messenger/skin/addressbook/icons/contact-generic.png";
   // .. FIXME figure out how to grab all address books
   let card = collection.cardForEmailAddress(email);
   if (card == null) {
@@ -84,7 +70,6 @@ gravatars.gravatar = function(email) {
   photoURI = "http://www.gravatar.com/avatar/" + encodeURIComponent(hash) + '?s=16&d=identicon';
   return photoURI;
 }
-
 
 gravatars.init = function() {
   var ObserverService = Cc["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);

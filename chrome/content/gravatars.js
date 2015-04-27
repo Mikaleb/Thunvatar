@@ -16,7 +16,9 @@ gravatars.columnHandler = {
     return gravatars.photo(author.mailbox);
   },
 
-  getSortStringForRow: function(hdr) { return gravatars.getAuthorFromHdr(hdr).mailbox; },
+  getSortStringForRow: function(hdr) {
+    return gravatars.getAuthorFromHdr(hdr).mailbox;
+  },
 
   isString: function() { return true; },
 
@@ -72,7 +74,7 @@ gravatars.gravatar = function(email) {
 };
 
 gravatars.init = function() {
-  var ObserverService = Cc["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
+  var ObserverService = Cc["@mozilla.org/observer-service;1"].getService(Ci.nsIObserverService);
   ObserverService.addObserver(gravatars.CreateDbObserver, "MsgCreateDBView", false);
 };
 

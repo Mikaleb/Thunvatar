@@ -1,0 +1,38 @@
+[
+  {
+    "namespace": "MahourDate",
+    "functions": [
+      {
+        "name": "addWindowListener",
+        "type": "function",
+        "description": "Adds a listener 3pane windows",
+        "async": false,
+        "parameters": [
+          {
+            "name": "hich",
+            "type": "string",
+            "description": "hich"
+          }
+        ]
+      },
+      {
+        "name": "changeSettings",
+        "type": "function",
+        "description": "Handle Prefrences",
+        "async": true,
+        "parameters": [
+          {
+            "name": "newSettings",
+            "type": "object",
+            "properties": {
+              "longMonth": { "type": "boolean" },
+              "showTime": { "type": "boolean" },
+              "weekDay": { "type": "boolean" },
+              "englishNumbers": { "type": "boolean" }
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

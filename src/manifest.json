@@ -1,33 +1,39 @@
 {
   "manifest_version": 2,
-  "name": "Thunvatar",
-  "description": "Get avatar from sender email",
-  "version": "1.0",
-  "author": "Mikaleb",
+  "name": "Mahour",
+  "description": "Adds a new Iranian(Persian/Jalali/Khorshidi) date column to ThunderBird.",
+  "version": "1.1.5",
+  "homepage_url": "https://github.com/mhdzli/mahour",
+  "author": "M.Zeinali",
   "applications": {
     "gecko": {
-      "id": "helloworld@yoursite.com",
+      "id": "mahour@zmim.ir",
       "strict_min_version": "68.0a1",
       "strict_max_version": "102.*"
     }
   },
   "experiment_apis": {
-    "FAC": {
-      "schema": "schema.json",
+    "MahourDate": {
+      "schema": "api/schema.json",
       "parent": {
         "scopes": ["addon_parent"],
-        "paths": [["FAC"]],
-        "script": "experiments.js",
-        "events": ["startup"]
+        "paths": [["MahourDate"]],
+        "script": "api/experiments.js"
       }
     }
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background/background.js"]
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": false
   },
   "icons": {
-    "64": "images/internet.png",
-    "32": "images/internet-32px.png",
-    "16": "images/internet-16px.png"
-  }
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "64": "assets/icons/icon64.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "permissions": ["storage"]
 }

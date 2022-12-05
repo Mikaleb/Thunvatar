@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "Thunvatar",
+  "description": "Get avatar from sender email",
+  "version": "1.0",
+  "author": "Mikaleb",
+  "applications": {
+    "gecko": {
+      "id": "helloworld@yoursite.com",
+      "strict_min_version": "68.0a1",
+      "strict_max_version": "102.*"
+    }
+  },
+  "experiment_apis": {
+    "FAC": {
+      "schema": "schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["FAC"]],
+        "script": "experiments.js",
+        "events": ["startup"]
+      }
+    }
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "icons": {
+    "64": "images/internet.png",
+    "32": "images/internet-32px.png",
+    "16": "images/internet-16px.png"
+  }
+}

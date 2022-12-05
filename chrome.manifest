@@ -1,3 +1,0 @@
-content     gravatars    chrome/content/
-
-overlay chrome://messenger/content/messenger.xul chrome://gravatars/content/gravatars_col_overlay.xul

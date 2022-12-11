@@ -7,7 +7,7 @@
   "author": "M.Zeinali",
   "applications": {
     "gecko": {
-      "id": "mahour@zmim.ir",
+      "id": "thunvatar@mikaleb.com",
       "strict_min_version": "68.0a1",
       "strict_max_version": "102.*"
     }

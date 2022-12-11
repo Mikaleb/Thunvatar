@@ -11,7 +11,7 @@ var { ExtensionParent } = ChromeUtils.import(
   "resource://gre/modules/ExtensionParent.jsm"
 );
 
-const EXTENSION_NAME = "mahour@zmim.ir";
+const EXTENSION_NAME = "thunvatar@mikaleb.com";
 var extension = ExtensionParent.GlobalManager.getExtension(EXTENSION_NAME);
 
 //customizeable options

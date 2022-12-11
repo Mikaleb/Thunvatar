@@ -3,11 +3,8 @@
 /*
 Default settings. Initialize storage to these values.
 */
-var datePrefrences = {
+var addonSettings = {
   longMonth: true,
-  showTime: true,
-  weekDay: false,
-  englishNumbers: false,
 };
 
 /*
@@ -22,13 +19,13 @@ On startup, check whether we have stored settings.
 If we don't, then store the default settings.
 */
 function checkStoredSettings(storedSettings) {
-  if (!storedSettings.datePrefrences) {
-    browser.storage.local.set({ datePrefrences });
+  if (!storedSettings.addonSettings) {
+    browser.storage.local.set({ addonSettings });
   }
 }
 
 function repaint(newSettings) {
-  browser.MahourDate.changeSettings(newSettings);
+  browser.ThunvatarApi.changeSettings(newSettings);
 }
 
 const gettingStoredSettings = browser.storage.local.get();
@@ -36,7 +33,7 @@ gettingStoredSettings.then(checkStoredSettings, onError);
 
 /* globals browser */
 var init = async () => {
-  browser.MahourDate.addWindowListener("hich");
+  browser.ThunvatarApi.addWindowListener("hich");
 };
 
 init();

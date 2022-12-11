@@ -15,13 +15,9 @@ const EXTENSION_NAME = "thunvatar@mikaleb.com";
 var extension = ExtensionParent.GlobalManager.getExtension(EXTENSION_NAME);
 
 //customizeable options
-var monthStyle = "long";
-var timeStyle = "2-digit";
-var weekDayStyle = "hidden";
-var numbersStyle = "arabext";
-
+// var monthStyle = "long";
 // Implements the functions defined in the experiments section of schema.json.
-var MahourDate = class extends ExtensionCommon.ExtensionAPI {
+var ThunvatarApi = class extends ExtensionCommon.ExtensionAPI {
   onStartup() {}
 
   onShutdown(isAppShutdown) {
@@ -36,8 +32,8 @@ var MahourDate = class extends ExtensionCommon.ExtensionAPI {
   getAPI(context) {
     context.callOnClose(this);
     return {
-      MahourDate: {
-        addWindowListener(hich) {
+      ThunvatarApi: {
+        addWindowListener() {
           // Adds a listener to detect new windows.
           ExtensionSupport.registerWindowListener(EXTENSION_NAME, {
             chromeURLs: [
@@ -48,30 +44,13 @@ var MahourDate = class extends ExtensionCommon.ExtensionAPI {
             onUnloadWindow: unpaint,
           });
         },
-        changeSettings(newSettings) {
-          if (newSettings.longMonth) {
-            monthStyle = "long";
-          } else {
-            monthStyle = "2-digit";
-          }
-          if (newSettings.showTime) {
-            timeStyle = "2-digit";
-          } else {
-            timeStyle = "hidden";
-          }
-          if (newSettings.weekDay) {
-            weekDayStyle = "long";
-          } else {
-            weekDayStyle = "hidden";
-          }
-          if (newSettings.englishNumbers) {
-            numbersStyle = "latn";
-          } else {
-            numbersStyle = "arabext";
-          }
+        changeSettings(_newSettings) {
+          // if (newSettings.longMonth) {
+          //   monthStyle = "long";
+          // }
           for (let win of Services.wm.getEnumerator("mail:3pane")) {
-            win.MahourDate.MahourDateHeaderView.destroy();
-            win.MahourDate.MahourDateHeaderView.init(win);
+            win.ThunvatarApi.ThunvatarHeaderView.destroy();
+            win.ThunvatarApi.ThunvatarHeaderView.init(win);
           }
         },
       },
@@ -87,15 +66,15 @@ var MahourDate = class extends ExtensionCommon.ExtensionAPI {
 };
 
 function paint(win) {
-  win.MahourDate = {};
+  win.ThunvatarApi = {};
   Services.scriptloader.loadSubScript(
     extension.getURL("content/customcol.js"),
-    win.MahourDate
+    win.ThunvatarApi
   );
-  win.MahourDate.MahourDateHeaderView.init(win);
+  win.ThunvatarApi.ThunvatarHeaderView.init(win);
 }
 
 function unpaint(win) {
-  win.MahourDate.MahourDateHeaderView.destroy();
-  delete win.MahourDate;
+  win.ThunvatarApi.ThunvatarHeaderView.destroy();
+  delete win.ThunvatarApi;
 }

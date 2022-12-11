@@ -1,29 +1,25 @@
 let gCryptoHash = null;
 
-function md5Hash(text) {
-  // Lazily create a reusable hasher
-  if (gCryptoHash === null) {
-    gCryptoHash = Cc["@mozilla.org/security/hash;1"].createInstance(
-      Ci.nsICryptoHash
-    );
+class AvatarFinder {
+  constructor(email) {
+    this.email = email;
+    this.size = 16;
   }
 
-  gCryptoHash.init(gCryptoHash.MD5);
+  getDomainFromEmail() {
+    let domain = "";
+    // extract domain from email
+    domain = this.email.match(/@(.*)/)[1];
+    // check if domain is valid
+    if (domain === undefined) {
+      return "";
+    }
+    // split domain by dot
+    domain = domain.split(".");
+    // get last part of domain and extension
+    domain = domain[domain.length - 2] + "." + domain[domain.length - 1];
 
-  // Convert the text to a byte array for hashing
-  gCryptoHash.update(
-    text.split("").map((c) => c.charCodeAt(0)),
-    text.length
-  );
-
-  // Request the has result as ASCII base64
-  return gCryptoHash.finish(true);
-}
-
-class Gravatar {
-  constructor() {
-    this.email = "";
-    this.size = 16;
+    return domain;
   }
 
   getGravatarUrl() {
@@ -34,9 +30,13 @@ class Gravatar {
     }`;
   }
 
-  getGravatar(value) {
-    this.email = value;
-    return this.getGravatarUrl();
+  findFaviconFromDomain(domain) {
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=${this.size}`;
+  }
+
+  getAvatar() {
+    const domain = this.getDomainFromEmail();
+    return this.findFaviconFromDomain(domain);
   }
 }
 
@@ -47,23 +47,22 @@ let { AppConstants } = ChromeUtils.import(
 );
 let { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 
-const GRAVATAR = new Gravatar();
-
-const jalaliDateColumnHandler = {
+const thunvatarDateColumnHandler = {
   init(win) {
     this.win = win;
   },
   getCellText(row, col) {
+    // const msgHdr = this.win.gDBView.getMsgHdrAt(row);
+    // const email = msgHdr.mime2DecodedAuthor.match(/<(.*)>/)[1];
+    // const AVATAR_FINDER = new AvatarFinder(email);
+    // return AVATAR_FINDER.getDomainFromEmail();
     return null;
   },
   getImageSrc(row, col) {
-    var msgHdr = this.win.gDBView.getMsgHdrAt(row);
+    const msgHdr = this.win.gDBView.getMsgHdrAt(row);
     const email = msgHdr.mime2DecodedAuthor.match(/<(.*)>/)[1];
     // get email address from header
-    const emailAvatar = GRAVATAR.getGravatar(email);
-
-    console.info("emailAvatar", emailAvatar);
-    return emailAvatar;
+    return new AvatarFinder(email).getAvatar();
   },
 
   getSortStringForRow(hdr) {
@@ -94,10 +93,10 @@ const columnOverlay = {
 
   observe(aMsgFolder, aTopic, aData) {
     try {
-      jalaliDateColumnHandler.init(this.win);
+      thunvatarDateColumnHandler.init(this.win);
       this.win.gDBView.addColumnHandler(
-        "jalaliDateColumn",
-        jalaliDateColumnHandler
+        "thunvatarDateColumn",
+        thunvatarDateColumnHandler
       );
     } catch (ex) {
       console.error(ex);
@@ -114,7 +113,7 @@ const columnOverlay = {
     treeCol.setAttribute("flex", "2");
     treeCol.setAttribute("closemenu", "none");
     treeCol.setAttribute("label", columnLabel);
-    treeCol.setAttribute("tooltiptext", "Sort by Persian date");
+    treeCol.setAttribute("tooltiptext", "Sort by domain");
 
     const threadCols = win.document.getElementById("threadCols");
     threadCols.appendChild(treeCol);
@@ -145,7 +144,7 @@ const columnOverlay = {
   },
 
   addColumns(win) {
-    this.addColumn(win, "jalaliDateColumn", "Sender's avatar");
+    this.addColumn(win, "thunvatarDateColumn", "Favicon");
   },
 
   destroyColumn(columnId) {
@@ -155,19 +154,19 @@ const columnOverlay = {
   },
 
   destroyColumns() {
-    this.destroyColumn("jalaliDateColumn");
+    this.destroyColumn("thunvatarDateColumn");
     Services.obs.removeObserver(this, "MsgCreateDBView");
   },
 };
 
-var MahourDateHeaderView = {
+var ThunvatarHeaderView = {
   init(win) {
     this.win = win;
     columnOverlay.init(win);
 
     // Usually the column handler is added when the window loads.
     // In our setup it's added later and we may miss the first notification.
-    // So we fire one ourserves.
+    // So we fire one ourselves.
     if (
       win.gDBView &&
       win.document.documentElement.getAttribute("windowtype") == "mail:3pane"

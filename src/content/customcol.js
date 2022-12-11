@@ -1,93 +1,71 @@
+let gCryptoHash = null;
+
+function md5Hash(text) {
+  // Lazily create a reusable hasher
+  if (gCryptoHash === null) {
+    gCryptoHash = Cc["@mozilla.org/security/hash;1"].createInstance(
+      Ci.nsICryptoHash
+    );
+  }
+
+  gCryptoHash.init(gCryptoHash.MD5);
+
+  // Convert the text to a byte array for hashing
+  gCryptoHash.update(
+    text.split("").map((c) => c.charCodeAt(0)),
+    text.length
+  );
+
+  // Request the has result as ASCII base64
+  return gCryptoHash.finish(true);
+}
+
+class Gravatar {
+  constructor() {
+    this.email = "";
+    this.size = 16;
+  }
+
+  getGravatarUrl() {
+    // trimed and strtolower email
+    const mailCleaned = this.email.trim().toLowerCase();
+    return `https://www.gravatar.com/avatar/${md5Hash(mailCleaned)}?s=${
+      this.size
+    }`;
+  }
+
+  getGravatar(value) {
+    this.email = value;
+    return this.getGravatarUrl();
+  }
+}
+
 // This Source Code Form is subject to the terms of the
 // GNU General Public License, version 3.0.
-var { AppConstants } = ChromeUtils.import(
+let { AppConstants } = ChromeUtils.import(
   "resource://gre/modules/AppConstants.jsm"
 );
-var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+let { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+
+const GRAVATAR = new Gravatar();
 
 const jalaliDateColumnHandler = {
   init(win) {
     this.win = win;
   },
   getCellText(row, col) {
-    var date = new Date(this.getJalaliDate(this.win.gDBView.getMsgHdrAt(row)));
-    var currentDate = new Date();
-
-    //fixed options
-    var yearStyle = "2-digit";
-    var dayStyle = "2-digit";
-
-    var locale = "fa-IR-u-nu-" + numbersStyle + "-ca-persian";
-
-    var year = date.toLocaleString(locale, { year: yearStyle });
-    var month = date.toLocaleString(locale, { month: monthStyle });
-    var day = date.toLocaleString(locale, { day: dayStyle });
-    var weekDay =
-      weekDayStyle != "hidden"
-        ? date.toLocaleString(locale, { weekday: weekDayStyle })
-        : "";
-    var time =
-      timeStyle != "hidden"
-        ? date.toLocaleString(locale, {
-            hour: timeStyle,
-            minute: timeStyle,
-            hour12: false,
-          }) + " ،"
-        : "";
-
-    //Fix for a bug that doesn't prepend zero to Farsi
-    if (time.length != 7 && timeStyle != "hidden") {
-      var zero = numbersStyle === "arabext" ? "۰" : "0";
-      time = zero + time;
-    }
-    var isCurrentYear;
-    if (currentDate.toLocaleString(locale, { year: yearStyle }) == year) {
-      isCurrentYear = true;
-    } else {
-      isCurrentYear = false;
-    }
-    var isCurrentDay;
-    if (date.toDateString() === currentDate.toDateString()) {
-      isCurrentDay = true;
-    } else {
-      isCurrentDay = false;
-    }
-    var isYesterday;
-    var yesterdayDate = new Date();
-    yesterdayDate.setDate(currentDate.getDate() - 1);
-    if (date.toDateString() === yesterdayDate.toDateString()) {
-      isYesterday = true;
-    } else {
-      isYesterday = false;
-    }
-
-    var placehodler;
-    if (monthStyle === "long") {
-      placeholder = "TT \u202BWD DD MM YY\u202C";
-    } else {
-      placeholder = "TT YY/MM/DD WD";
-    }
-
-    //remove year if it's current year
-    if (isCurrentYear) {
-      placeholder = placeholder.replace(/YY./, "");
-    }
-    //only show time if it's current day or yesterday
-    if (isCurrentDay) {
-      placeholder = "TT امروز";
-    } else if (isYesterday) {
-      placeholder = "TT دیروز";
-    }
-
-    dateString = placeholder
-      .replace("YY", year)
-      .replace("MM", month)
-      .replace("DD", day)
-      .replace("WD", weekDay)
-      .replace("TT", time);
-
-    return dateString;
+    return null;
   },
+  getImageSrc(row, col) {
+    var msgHdr = this.win.gDBView.getMsgHdrAt(row);
+    const email = msgHdr.mime2DecodedAuthor.match(/<(.*)>/)[1];
+    // get email address from header
+    const emailAvatar = GRAVATAR.getGravatar(email);
+
+    console.info("emailAvatar", emailAvatar);
+    return emailAvatar;
+  },
+
   getSortStringForRow(hdr) {
     return this.getJalaliDate(hdr);
   },
@@ -96,9 +74,6 @@ const jalaliDateColumnHandler = {
   },
   getCellProperties(row, col, props) {},
   getRowProperties(row, props) {},
-  getImageSrc(row, col) {
-    return null;
-  },
   getSortLongForRow(hdr) {
     return 0;
   },
@@ -170,7 +145,7 @@ const columnOverlay = {
   },
 
   addColumns(win) {
-    this.addColumn(win, "jalaliDateColumn", "Date (Persian)");
+    this.addColumn(win, "jalaliDateColumn", "Sender's avatar");
   },
 
   destroyColumn(columnId) {

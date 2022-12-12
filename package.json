@@ -1,6 +1,6 @@
 {
   "name": "thunvatar",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "src/manifest.json",
   "repository": "https://github.com/Mikaleb/thunvatar.git",
   "author": "Mikaleb <mikaleb@live.fr>",
@@ -17,5 +17,8 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
+  },
+  "npm": {
+    "publish": false
   }
 }

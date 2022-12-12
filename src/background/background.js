@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /*
 Default settings. Initialize storage to these values.
@@ -33,7 +33,7 @@ gettingStoredSettings.then(checkStoredSettings, onError);
 
 /* globals browser */
 var init = async () => {
-  browser.ThunvatarApi.addWindowListener("hich");
+  browser.ThunvatarApi.addWindowListener('hich');
 };
 
 init();

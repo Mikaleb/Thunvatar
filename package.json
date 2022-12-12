@@ -1,0 +1,21 @@
+{
+  "name": "thunvatar",
+  "version": "1.0.0",
+  "main": "src/manifest.json",
+  "repository": "https://github.com/Mikaleb/thunvatar.git",
+  "author": "Mikaleb <mikaleb@live.fr>",
+  "license": "MIT",
+  "devDependencies": {
+    "cz-conventional-changelog": "3.3.0",
+    "prettier": "2.8.1",
+    "typescript": "^4.9.4"
+  },
+  "scripts": {
+    "xpi": "cd src && zip -r thunvatar.xpi *"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

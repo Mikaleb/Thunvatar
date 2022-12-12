@@ -7,28 +7,28 @@ class AvatarFinder {
   }
 
   getDomainFromEmail() {
-    let domain = "";
+    let domain = '';
     // extract domain from email
     domain = this.email.match(/@(.*)/)[1];
     // check if domain is valid
     if (domain === undefined) {
-      return "";
+      return '';
     }
     // split domain by dot
-    domain = domain.split(".");
+    domain = domain.split('.');
     // get last part of domain and extension
-    domain = domain[domain.length - 2] + "." + domain[domain.length - 1];
+    domain = domain[domain.length - 2] + '.' + domain[domain.length - 1];
 
     return domain;
   }
 
-  getGravatarUrl() {
-    // trimed and strtolower email
-    const mailCleaned = this.email.trim().toLowerCase();
-    return `https://www.gravatar.com/avatar/${md5Hash(mailCleaned)}?s=${
-      this.size
-    }`;
-  }
+  // getGravatarUrl() {
+  //   // trimed and strtolower email
+  //   const mailCleaned = this.email.trim().toLowerCase()
+  //   return `https://www.gravatar.com/avatar/${md5Hash(mailCleaned)}?s=${
+  //     this.size
+  //   }`
+  // }
 
   findFaviconFromDomain(domain) {
     return `https://www.google.com/s2/favicons?domain=${domain}&sz=${this.size}`;
@@ -42,21 +42,25 @@ class AvatarFinder {
 
 // This Source Code Form is subject to the terms of the
 // GNU General Public License, version 3.0.
+// @ts-ignore
 let { AppConstants } = ChromeUtils.import(
-  "resource://gre/modules/AppConstants.jsm"
+  'resource://gre/modules/AppConstants.jsm'
 );
-let { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
+// @ts-ignore
+let { Services } = ChromeUtils.import('resource://gre/modules/Services.jsm');
 
 const thunvatarDateColumnHandler = {
   init(win) {
     this.win = win;
   },
   getCellText(row, col) {
-    // const msgHdr = this.win.gDBView.getMsgHdrAt(row);
-    // const email = msgHdr.mime2DecodedAuthor.match(/<(.*)>/)[1];
-    // const AVATAR_FINDER = new AvatarFinder(email);
-    // return AVATAR_FINDER.getDomainFromEmail();
-    return null;
+    return '';
+  },
+  getCellValue(row, col) {
+    const msgHdr = this.win.gDBView.getMsgHdrAt(row);
+    const email = msgHdr.mime2DecodedAuthor.match(/<(.*)>/)[1];
+    const AVATAR_FINDER = new AvatarFinder(email);
+    return AVATAR_FINDER.getDomainFromEmail();
   },
   getImageSrc(row, col) {
     const msgHdr = this.win.gDBView.getMsgHdrAt(row);
@@ -66,18 +70,19 @@ const thunvatarDateColumnHandler = {
   },
 
   getSortStringForRow(hdr) {
-    return this.getJalaliDate(hdr);
+    const msgHdr = this.win.gDBView.getMsgHdrAt(row);
+    return msgHdr.mime2DecodedAuthor;
   },
   isString() {
-    return true;
+    return false;
   },
   getCellProperties(row, col, props) {},
   getRowProperties(row, props) {},
+  // type: nsIMsgDBHdr
+  // If the column displays a number, this will return the number that the column should be sorted by.
   getSortLongForRow(hdr) {
-    return 0;
-  },
-  getJalaliDate(aHeader) {
-    return aHeader.date / 1000;
+    const msgHdr = this.win.gDBView.getMsgHdrAt(row);
+    return msgHdr.mime2DecodedAuthor;
   },
 };
 
@@ -95,27 +100,27 @@ const columnOverlay = {
     try {
       thunvatarDateColumnHandler.init(this.win);
       this.win.gDBView.addColumnHandler(
-        "thunvatarDateColumn",
+        'thunvatarDateColumn',
         thunvatarDateColumnHandler
       );
     } catch (ex) {
       console.error(ex);
-      throw new Error("Cannot add column handler");
+      throw new Error('Cannot add column handler');
     }
   },
 
   addColumn(win, columnId, columnLabel) {
     if (win.document.getElementById(columnId)) return;
 
-    const treeCol = win.document.createXULElement("treecol");
-    treeCol.setAttribute("id", columnId);
-    treeCol.setAttribute("persist", "hidden ordinal sortDirection width");
-    treeCol.setAttribute("flex", "2");
-    treeCol.setAttribute("closemenu", "none");
-    treeCol.setAttribute("label", columnLabel);
-    treeCol.setAttribute("tooltiptext", "Sort by domain");
+    const treeCol = win.document.createXULElement('treecol');
+    treeCol.setAttribute('id', columnId);
+    treeCol.setAttribute('persist', 'hidden ordinal sortDirection width');
+    treeCol.setAttribute('flex', '2');
+    treeCol.setAttribute('closemenu', 'none');
+    treeCol.setAttribute('label', columnLabel);
+    treeCol.setAttribute('tooltiptext', 'Sort by domain');
 
-    const threadCols = win.document.getElementById("threadCols");
+    const threadCols = win.document.getElementById('threadCols');
     threadCols.appendChild(treeCol);
 
     // Restore persisted attributes.
@@ -131,7 +136,7 @@ const columnOverlay = {
       );
       // See Thunderbird bug 1607575 and bug 1612055.
       if (
-        attribute != "ordinal" ||
+        attribute != 'ordinal' ||
         parseInt(AppConstants.MOZ_APP_VERSION, 10) < 74
       ) {
         treeCol.setAttribute(attribute, value);
@@ -140,11 +145,11 @@ const columnOverlay = {
       }
     }
 
-    Services.obs.addObserver(this, "MsgCreateDBView", false);
+    Services.obs.addObserver(this, 'MsgCreateDBView', false);
   },
 
   addColumns(win) {
-    this.addColumn(win, "thunvatarDateColumn", "Favicon");
+    this.addColumn(win, 'thunvatarDateColumn', 'Favicon');
   },
 
   destroyColumn(columnId) {
@@ -154,8 +159,8 @@ const columnOverlay = {
   },
 
   destroyColumns() {
-    this.destroyColumn("thunvatarDateColumn");
-    Services.obs.removeObserver(this, "MsgCreateDBView");
+    this.destroyColumn('thunvatarDateColumn');
+    Services.obs.removeObserver(this, 'MsgCreateDBView');
   },
 };
 
@@ -169,9 +174,9 @@ var ThunvatarHeaderView = {
     // So we fire one ourselves.
     if (
       win.gDBView &&
-      win.document.documentElement.getAttribute("windowtype") == "mail:3pane"
+      win.document.documentElement.getAttribute('windowtype') == 'mail:3pane'
     ) {
-      Services.obs.notifyObservers(null, "MsgCreateDBView");
+      Services.obs.notifyObservers(null, 'MsgCreateDBView');
     }
   },
 

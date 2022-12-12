@@ -1,18 +1,18 @@
 // This Source Code Form is subject to the terms of the
 // GNU General Public License, version 3.0.
 
-"use strict";
+'use strict';
 
-var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
-var { ExtensionSupport } = ChromeUtils.import(
-  "resource:///modules/ExtensionSupport.jsm"
+let { Services } = ChromeUtils.import('resource://gre/modules/Services.jsm');
+let { ExtensionSupport } = ChromeUtils.import(
+  'resource:///modules/ExtensionSupport.jsm'
 );
-var { ExtensionParent } = ChromeUtils.import(
-  "resource://gre/modules/ExtensionParent.jsm"
+let { ExtensionParent } = ChromeUtils.import(
+  'resource://gre/modules/ExtensionParent.jsm'
 );
 
-const EXTENSION_NAME = "thunvatar@mikaleb.com";
-var extension = ExtensionParent.GlobalManager.getExtension(EXTENSION_NAME);
+const EXTENSION_NAME = 'thunvatar@mikaleb.com';
+let extension = ExtensionParent.GlobalManager.getExtension(EXTENSION_NAME);
 
 //customizeable options
 // var monthStyle = "long";
@@ -26,7 +26,7 @@ var ThunvatarApi = class extends ExtensionCommon.ExtensionAPI {
     // Due to new versions not taking effect (https://bugzilla.mozilla.org/show_bug.cgi?id=1634348)
     // we invalidate the startup cache. That's the same effect as starting with -purgecaches
     // (or deleting the startupCache directory from the profile).
-    Services.obs.notifyObservers(null, "startupcache-invalidate");
+    Services.obs.notifyObservers(null, 'startupcache-invalidate');
   }
 
   getAPI(context) {
@@ -37,8 +37,8 @@ var ThunvatarApi = class extends ExtensionCommon.ExtensionAPI {
           // Adds a listener to detect new windows.
           ExtensionSupport.registerWindowListener(EXTENSION_NAME, {
             chromeURLs: [
-              "chrome://messenger/content/messenger.xul",
-              "chrome://messenger/content/messenger.xhtml",
+              'chrome://messenger/content/messenger.xul',
+              'chrome://messenger/content/messenger.xhtml',
             ],
             onLoadWindow: paint,
             onUnloadWindow: unpaint,
@@ -48,7 +48,7 @@ var ThunvatarApi = class extends ExtensionCommon.ExtensionAPI {
           // if (newSettings.longMonth) {
           //   monthStyle = "long";
           // }
-          for (let win of Services.wm.getEnumerator("mail:3pane")) {
+          for (let win of Services.wm.getEnumerator('mail:3pane')) {
             win.ThunvatarApi.ThunvatarHeaderView.destroy();
             win.ThunvatarApi.ThunvatarHeaderView.init(win);
           }
@@ -59,7 +59,7 @@ var ThunvatarApi = class extends ExtensionCommon.ExtensionAPI {
 
   close() {
     ExtensionSupport.unregisterWindowListener(EXTENSION_NAME);
-    for (let win of Services.wm.getEnumerator("mail:3pane")) {
+    for (let win of Services.wm.getEnumerator('mail:3pane')) {
       unpaint(win);
     }
   }
@@ -68,13 +68,14 @@ var ThunvatarApi = class extends ExtensionCommon.ExtensionAPI {
 function paint(win) {
   win.ThunvatarApi = {};
   Services.scriptloader.loadSubScript(
-    extension.getURL("content/customcol.js"),
+    extension.getURL('content/customcol.js'),
     win.ThunvatarApi
   );
   win.ThunvatarApi.ThunvatarHeaderView.init(win);
 }
 
 function unpaint(win) {
+  if (!win.ThunvatarApi) return;
   win.ThunvatarApi.ThunvatarHeaderView.destroy();
   delete win.ThunvatarApi;
 }

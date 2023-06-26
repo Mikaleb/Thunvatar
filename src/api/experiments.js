@@ -3,7 +3,9 @@
 
 'use strict';
 
-let { Services } = ChromeUtils.import('resource://gre/modules/Services.jsm');
+let Services = globalThis.Services || ChromeUtils.import(
+  'resource://gre/modules/Services.jsm'
+).Services;
 let { ExtensionSupport } = ChromeUtils.import(
   'resource:///modules/ExtensionSupport.jsm'
 );

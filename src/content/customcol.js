@@ -21,15 +21,6 @@ class AvatarFinder {
 
     return domain;
   }
-
-  // getGravatarUrl() {
-  //   // trimed and strtolower email
-  //   const mailCleaned = this.email.trim().toLowerCase()
-  //   return `https://www.gravatar.com/avatar/${md5Hash(mailCleaned)}?s=${
-  //     this.size
-  //   }`
-  // }
-
   findFaviconFromDomain(domain) {
     return `https://www.google.com/s2/favicons?domain=${domain}&sz=${this.size}`;
   }

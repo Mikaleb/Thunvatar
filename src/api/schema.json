@@ -14,21 +14,6 @@
             "description": "hich"
           }
         ]
-      },
-      {
-        "name": "changeSettings",
-        "type": "function",
-        "description": "Handle Prefrences",
-        "async": true,
-        "parameters": [
-          {
-            "name": "newSettings",
-            "type": "object",
-            "properties": {
-              "longMonth": { "type": "boolean" }
-            }
-          }
-        ]
       }
     ]
   }

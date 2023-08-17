@@ -14,12 +14,8 @@ let { ExtensionParent } = ChromeUtils.import(
 const EXTENSION_NAME = 'thunvatar@mikaleb.com';
 let extension = ExtensionParent.GlobalManager.getExtension(EXTENSION_NAME);
 
-//customizeable options
-// var monthStyle = "long";
 // Implements the functions defined in the experiments section of schema.json.
 var ThunvatarApi = class extends ExtensionCommon.ExtensionAPI {
-  onStartup() {}
-
   onShutdown(isAppShutdown) {
     if (isAppShutdown) return;
     // Looks like we got uninstalled. Maybe a new version will be installed now.
@@ -43,15 +39,6 @@ var ThunvatarApi = class extends ExtensionCommon.ExtensionAPI {
             onLoadWindow: paint,
             onUnloadWindow: unpaint,
           });
-        },
-        changeSettings(_newSettings) {
-          // if (newSettings.longMonth) {
-          //   monthStyle = "long";
-          // }
-          for (let win of Services.wm.getEnumerator('mail:3pane')) {
-            win.ThunvatarApi.ThunvatarHeaderView.destroy();
-            win.ThunvatarApi.ThunvatarHeaderView.init(win);
-          }
         },
       },
     };

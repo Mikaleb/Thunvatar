@@ -24,10 +24,6 @@ function checkStoredSettings(storedSettings) {
   }
 }
 
-function repaint(newSettings) {
-  browser.ThunvatarApi.changeSettings(newSettings);
-}
-
 const gettingStoredSettings = browser.storage.local.get();
 gettingStoredSettings.then(checkStoredSettings, onError);
 

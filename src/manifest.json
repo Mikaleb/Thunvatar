@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Thunvatar",
   "description": "Adding a column with the favicon of sender's domain to the message list",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "homepage_url": "https://github.com/Mikaleb/thunvatar",
   "author": "Mikaleb",
   "browser_specific_settings": {

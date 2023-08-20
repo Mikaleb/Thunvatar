@@ -38,7 +38,9 @@ let { AppConstants } = ChromeUtils.import(
   'resource://gre/modules/AppConstants.jsm'
 );
 // @ts-ignore
-let { Services } = ChromeUtils.import('resource://gre/modules/Services.jsm');
+let Services = globalThis.Services || ChromeUtils.import(
+  'resource://gre/modules/Services.jsm'
+).Services;
 
 const thunvatarDateColumnHandler = {
   init(win) {

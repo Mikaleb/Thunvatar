@@ -35,12 +35,12 @@ class AvatarFinder {
 // GNU General Public License, version 3.0.
 // @ts-ignore
 let { AppConstants } = ChromeUtils.import(
-  'resource://gre/modules/AppConstants.jsm'
+  'resource://gre/modules/AppConstants.jsm',
 );
 // @ts-ignore
-let Services = globalThis.Services || ChromeUtils.import(
-  'resource://gre/modules/Services.jsm'
-).Services;
+let Services =
+  globalThis.Services ||
+  ChromeUtils.import('resource://gre/modules/Services.jsm').Services;
 
 const thunvatarDateColumnHandler = {
   init(win) {
@@ -94,7 +94,7 @@ const columnOverlay = {
       thunvatarDateColumnHandler.init(this.win);
       this.win.gDBView.addColumnHandler(
         'thunvatarDateColumn',
-        thunvatarDateColumnHandler
+        thunvatarDateColumnHandler,
       );
     } catch (ex) {
       console.error(ex);
@@ -119,13 +119,13 @@ const columnOverlay = {
     // Restore persisted attributes.
     let attributes = Services.xulStore.getAttributeEnumerator(
       this.win.document.URL,
-      columnId
+      columnId,
     );
     for (let attribute of attributes) {
       let value = Services.xulStore.getValue(
         this.win.document.URL,
         columnId,
-        attribute
+        attribute,
       );
       // See Thunderbird bug 1607575 and bug 1612055.
       if (
